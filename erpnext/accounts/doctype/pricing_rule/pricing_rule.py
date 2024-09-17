@@ -343,11 +343,15 @@ def get_pricing_rule_for_item(args, doc=None, for_validate=False):
 
 	update_args_for_pricing_rule(args)
 
-	pricing_rules = (
-		get_applied_pricing_rules(args.get("pricing_rules"))
-		if for_validate and args.get("pricing_rules")
-		else get_pricing_rules(args, doc)
-	)
+	if doc.doctype == "Sales Invoice":
+		args.transaction_date = doc.custom_magic_delivery_date
+		pricing_rules = get_pricing_rules(args, doc)
+	else:
+		pricing_rules = (
+			get_applied_pricing_rules(args.get("pricing_rules"))
+			if for_validate and args.get("pricing_rules")
+			else get_pricing_rules(args, doc)
+		)
 
 	if pricing_rules:
 		rules = []
